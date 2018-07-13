@@ -23,17 +23,17 @@ import ipaddress
 
 # Get basic url format, including a few obfuscation techniques, main anchor is the uri scheme
 GENERIC_URL_RE = re.compile(r"""
-        (
+   (
             [fhstu]\w\w?[px]s?
-            (?::|__)
-            [\x20\[]*
+            (?::\/\/|__)
+            [\x20\(\[]*
             \w
-            \S+?
-            (?:\x20[\/\.][^\.\/\s]\S*?)*
+            [^\s\xa0]+?
+            (?:\x20[\/\.][^\.\/\s][^\s\xa0]*?)*
         )
-        [\.\?>\"'\)!,}:;\]]*
+        [\.\?>\"'\)!,}:;\u201d\u2019\]]*
         (?=\s|$)
-    """, re.IGNORECASE | re.VERBOSE)
+        """, re.IGNORECASE | re.VERBOSE)
 
 # Split URLs on some characters that may be valid, but may also be garbage
 URL_SPLIT_STR = r"[>\"'\),};]"
@@ -42,19 +42,19 @@ URL_SPLIT_STR = r"[>\"'\),};]"
 BRACKET_URL_RE = re.compile(r"""
         \b
         (
-            [\\\w\[\]-]+
+            [\:\/\\\w\[\]\(\)-]+
             (?:
                 \x20?
-                [\[]
+                [\(\[]
                 \x20?
                 \.
                 \x20?
-                [\]]
+                [\]\)]
                 \x20?
-                (\S*|\xa0\?.*)
+                [^\s\xa0]*?
             )+
         )
-        [>\"'!,}:;\]]*
+        [\.\?>\"'\)!,}:;\u201d\u2019\]]*
         (?=\s|$)
     """, re.VERBOSE)
 
@@ -67,22 +67,22 @@ BACKSLASH_URL_RE = re.compile(r"""
                 \x20?
                 \\?\.
                 \x20?
-                \S*?
+                [^\s\xa0]?
             )*?
             (?:
                 \x20?
                 \\\.
                 \x20?
-                \S*?
+                [^\s\xa0]*?
             )
             (?:
                 \x20?
                 \\?\.
                 \x20?
-                \S*?
+                [^\s\xa0]*?
             )*
         )
-        [\.\?>\"'\)!,}:;\]]*
+        [\.\?>\"'\)!,}:;\u201d\u2019\]]*
         (?=\s|$)
     """, re.VERBOSE)
 
